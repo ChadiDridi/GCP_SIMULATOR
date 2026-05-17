@@ -1,0 +1,51 @@
+GCP Simulator has been deployed!
+
+=== Get the simulator URL ===
+
+  {{- if eq .Values.service.type "NodePort" }}
+  export SIMULATOR_URL=http://$(minikube ip):{{ .Values.service.nodePort }}
+  {{- else }}
+  export SIMULATOR_URL=http://$(kubectl get svc {{ include "gcp-simulator.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'):{{ .Values.service.port }}
+  {{- end }}
+
+=== Health check ===
+
+  curl $SIMULATOR_URL/health
+
+=== Quick test (no auth) ===
+
+  curl -H "Authorization: Bearer {{ .Values.simulator.devToken }}" \
+    "$SIMULATOR_URL/storage/v1/b?project={{ .Values.simulator.projectId }}"
+
+=== SDK Connection ===
+
+All services use: SIMULATOR_URL = http://<minikube-ip>:{{ .Values.service.nodePort }}
+
+  # Cloud Storage
+  from google.cloud import storage
+  from google.api_core.client_options import ClientOptions
+  client = storage.Client(project="{{ .Values.simulator.projectId }}",
+      client_options=ClientOptions(api_endpoint="$SIMULATOR_URL"))
+
+  # BigQuery
+  import os; os.environ["BIGQUERY_EMULATOR_HOST"] = "$SIMULATOR_URL"
+
+  # Pub/Sub (REST transport required)
+  from google.cloud import pubsub_v1
+  publisher = pubsub_v1.PublisherClient(transport="rest",
+      client_options=ClientOptions(api_endpoint="$SIMULATOR_URL"))
+
+  # Firestore
+  from google.cloud import firestore
+  client = firestore.Client(project="{{ .Values.simulator.projectId }}",
+      client_options=ClientOptions(api_endpoint="$SIMULATOR_URL"))
+
+=== Generate service account key ===
+
+  # From the project root (requires Python + psycopg2 for local access):
+  python scripts/generate_service_account.py \
+    --project {{ .Values.simulator.projectId }} \
+    --email dev@{{ .Values.simulator.projectId }}.iam.gserviceaccount.com \
+    --db-url postgresql://postgres:{{ .Values.postgresql.auth.postgresPassword }}@<db-host>:5432/{{ .Values.postgresql.auth.database }} \
+    --token-uri $SIMULATOR_URL/o/oauth2/token \
+    --output ./service-account.json

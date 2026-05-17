@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gcp-simulator.fullname" . }}
+  labels:
+    {{- include "gcp-simulator.labels" . | nindent 4 }}
+data:
+  GCP_SIM_PROJECT_ID: {{ .Values.simulator.projectId | quote }}
+  GCP_SIM_LOG_LEVEL: {{ .Values.simulator.logLevel | quote }}
+  GCP_SIM_PORT: "9099"
+  GCP_SIM_HOST: "0.0.0.0"
+  GCP_SIM_ENABLED_SERVICES: {{ .Values.simulator.enabledServices | quote }}
+  GCP_SIM_DATA_DIR: "/data"

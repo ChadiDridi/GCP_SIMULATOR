@@ -1,0 +1,37 @@
+replicaCount: 1
+
+image:
+  repository: gcp-simulator
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 9099
+  nodePort: 30099
+
+simulator:
+  projectId: "local-dev"
+  devToken: "dev-token"
+  logLevel: "INFO"
+  enabledServices: "gcs,pubsub,bigquery,firestore,secretmanager,iam"
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "simulator-pg-pass"
+    username: "postgres"
+    database: "gcp_simulator"
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+  fullnameOverride: "gcp-simulator-postgresql"

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gcp-simulator.fullname" . }}
+  labels:
+    {{- include "gcp-simulator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "gcp-simulator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "gcp-simulator.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "gcp-simulator.fullname" . }}
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z {{ include "gcp-simulator.postgresHost" . }} 5432; do
+                echo "waiting for postgres..."; sleep 2;
+              done
+        - name: run-migrations
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "gcp-simulator.fullname" . }}
+            - secretRef:
+                name: {{ include "gcp-simulator.fullname" . }}
+      containers:
+        - name: gcp-simulator
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9099
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "gcp-simulator.fullname" . }}
+            - secretRef:
+                name: {{ include "gcp-simulator.fullname" . }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
