@@ -7,6 +7,7 @@ _ALL_SERVICES = [
     "cloudrun", "gce", "vpc", "lb",
     "secretmanager", "dataflow", "dataform",
     "iam", "dns", "scheduler", "tasks",
+    "alloydb", "dms", "datastream",
 ]
 
 

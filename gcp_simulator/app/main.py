@@ -28,6 +28,9 @@ _SERVICE_REGISTRY = {
     "dns":           ("gcp_simulator.app.routers.dns.router", "router"),
     "scheduler":     ("gcp_simulator.app.routers.scheduler.router", "router"),
     "tasks":         ("gcp_simulator.app.routers.tasks.router", "router"),
+    "alloydb":       ("gcp_simulator.app.routers.alloydb.router", "router"),
+    "dms":           ("gcp_simulator.app.routers.dms.router", "router"),
+    "datastream":    ("gcp_simulator.app.routers.datastream.router", "router"),
 }
 
 

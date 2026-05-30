@@ -34,6 +34,9 @@ gcp-sim start --all
 | Cloud DNS | `/dns/v1/projects/{p}/managedZones/...` | Zones, record sets |
 | Cloud Scheduler | `/v1/projects/{p}/locations/.../jobs/...` | Jobs + `:run` fires real HTTP |
 | Cloud Tasks | `/v2/projects/{p}/locations/.../queues/...` | Queues, tasks + real HTTP dispatch |
+| AlloyDB | `/v1/projects/{p}/locations/.../clusters/...` | Clusters, instances, databases, users, backups |
+| Database Migration Service | `/v1/projects/{p}/locations/.../migrationJobs/...` | Connection profiles + migration jobs (start/stop/promote) |
+| Datastream | `/v1/projects/{p}/locations/.../streams/...` | CDC streams, connection profiles, private VPC connections |
 | OAuth2 | `/token`, `/o/oauth2/token` | JWT assertion + dev token |
 
 ---
@@ -75,7 +78,7 @@ gcp-sim service-account create [--project P] [--email E] [--output key.json]
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--services` | `gcs,pubsub,bigquery,firestore` | Comma-separated service list |
-| `--all` | — | Enable all 19 services |
+| `--all` | — | Enable all 22 services |
 | `--port` | `9099` | HTTP port |
 | `--project` | `local-dev` | Default GCP project ID |
 | `--dev-token` | `dev-token` | Always-valid Bearer token (no auth needed) |
@@ -275,5 +278,8 @@ gcp-sim start
        ├─ IAM           → /v1/projects/.../roles|serviceAccounts
        ├─ DNS           → /dns/v1/projects/.../managedZones
        ├─ Scheduler     → /v1/projects/.../jobs (HTTP dispatch on :run)
-       └─ Tasks         → /v2/projects/.../queues|tasks (real HTTP dispatch)
+       ├─ Tasks         → /v2/projects/.../queues|tasks (real HTTP dispatch)
+       ├─ AlloyDB       → /v1/projects/.../clusters|instances|databases|users|backups
+       ├─ DMS           → /v1/projects/.../connectionProfiles|migrationJobs
+       └─ Datastream    → /v1/projects/.../connectionProfiles|privateConnections|streams
 ```

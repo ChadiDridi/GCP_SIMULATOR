@@ -16,6 +16,7 @@ _ALL_SCHEMAS = [
     "cloudsql", "spanner", "bigtable", "memorystore", "cloudrun",
     "gce", "vpc", "loadbalancer", "secretmanager", "dataflow",
     "dataform", "iam", "dns", "scheduler", "tasks",
+    "alloydb", "dms", "datastream",
 ]
 _SCHEMA_TRANSLATE = {s: None for s in _ALL_SCHEMAS}
 
@@ -51,6 +52,9 @@ async def _create_tables():
     import gcp_simulator.app.models.pubsub  # noqa: F401
     import gcp_simulator.app.models.bigquery  # noqa: F401
     import gcp_simulator.app.models.firestore  # noqa: F401
+    import gcp_simulator.app.models.alloydb  # noqa: F401
+    import gcp_simulator.app.models.dms  # noqa: F401
+    import gcp_simulator.app.models.datastream  # noqa: F401
 
     async with _TEST_ENGINE.begin() as conn:
         translated = await conn.execution_options(schema_translate_map=_SCHEMA_TRANSLATE)
