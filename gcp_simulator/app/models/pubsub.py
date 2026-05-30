@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Integer, Boolean, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -16,7 +17,7 @@ class Topic(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     project_id: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -46,7 +47,7 @@ class Message(Base):
     topic_name: Mapped[str] = mapped_column(String(255), nullable=False)
     message_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     data: Mapped[str | None] = mapped_column(Text)
-    attributes: Mapped[dict] = mapped_column(JSONB, default=dict)
+    attributes: Mapped[dict] = mapped_column(JSON, default=dict)
     publish_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 

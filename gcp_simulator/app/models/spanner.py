@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Text, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -20,7 +21,7 @@ class SpannerInstance(Base):
     config: Mapped[str] = mapped_column(Text, default="regional-us-central1")
     node_count: Mapped[int] = mapped_column(default=1)
     state: Mapped[str] = mapped_column(String(32), default="READY")
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -36,7 +37,7 @@ class SpannerDatabase(Base):
     instance_id: Mapped[str] = mapped_column(Text, nullable=False)
     database_id: Mapped[str] = mapped_column(Text, nullable=False)
     state: Mapped[str] = mapped_column(String(32), default="READY")
-    ddl_statements: Mapped[list] = mapped_column(JSONB, default=list)
+    ddl_statements: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -49,7 +50,7 @@ class SpannerSession(Base):
     instance_id: Mapped[str] = mapped_column(Text, nullable=False)
     database_id: Mapped[str] = mapped_column(Text, nullable=False)
     session_id: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     last_use: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 

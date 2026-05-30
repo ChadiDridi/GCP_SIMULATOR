@@ -1,13 +1,14 @@
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from gcp_simulator.app.db.engine import get_db
 from gcp_simulator.app.models.pubsub import Message, PendingMessage, Subscription, Topic
 from gcp_simulator.app.schemas.pubsub import PublishRequest, TopicCreate
+from gcp_simulator.app.routers.pubsub.subscriptions import _deliver_push
 
 router = APIRouter()
 
@@ -84,6 +85,7 @@ async def publish_messages(
     project_id: str,
     topic_name: str,
     body: PublishRequest,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -122,14 +124,27 @@ async def publish_messages(
 
         # Fan-out to all subscriptions
         for sub in subscriptions:
-            pending = PendingMessage(
-                id=uuid.uuid4(),
-                subscription_id=sub.id,
-                message_id=message_id,
-                ack_id=str(uuid.uuid4()),
-                acked=False,
-            )
-            db.add(pending)
+            if sub.push_endpoint:
+                # Push subscription: deliver in background, don't queue as pending
+                push_payload = {
+                    "message": {
+                        "data": msg.get("data", ""),
+                        "attributes": msg.get("attributes", {}),
+                        "messageId": message_id,
+                        "publishTime": now.isoformat() + "Z",
+                    },
+                    "subscription": f"projects/{sub.project_id}/subscriptions/{sub.name}",
+                }
+                background_tasks.add_task(_deliver_push, sub.push_endpoint, push_payload)
+            else:
+                pending = PendingMessage(
+                    id=uuid.uuid4(),
+                    subscription_id=sub.id,
+                    message_id=message_id,
+                    ack_id=str(uuid.uuid4()),
+                    acked=False,
+                )
+                db.add(pending)
 
     await db.flush()
     return {"messageIds": message_ids}

@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import String, DateTime, ARRAY, Text
+from sqlalchemy import JSON, String, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
@@ -14,7 +14,7 @@ class Token(Base):
     token_hash: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
     project_id: Mapped[str] = mapped_column(String(255), nullable=False)
     service_account_email: Mapped[str | None] = mapped_column(String(512))
-    scopes: Mapped[list[str] | None] = mapped_column(ARRAY(Text))
+    scopes: Mapped[list[str] | None] = mapped_column(JSON)
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 

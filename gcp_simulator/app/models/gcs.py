@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Boolean, BigInteger, Text, LargeBinary, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -16,7 +17,7 @@ class Bucket(Base):
     location: Mapped[str] = mapped_column(String(64), default="US")
     storage_class: Mapped[str] = mapped_column(String(64), default="STANDARD")
     versioning: Mapped[bool] = mapped_column(Boolean, default=False)
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -34,7 +35,7 @@ class Object(Base):
     size: Mapped[int | None] = mapped_column(BigInteger)
     md5_hash: Mapped[str | None] = mapped_column(String(64))
     crc32c: Mapped[str | None] = mapped_column(String(16))
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
+    user_metadata: Mapped[dict] = mapped_column("metadata", JSON, default=dict)
     generation: Mapped[int] = mapped_column(BigInteger, default=1)
     data: Mapped[bytes | None] = mapped_column(LargeBinary)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

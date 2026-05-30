@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, BigInteger, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -19,11 +20,11 @@ class Instance(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     machine_type: Mapped[str] = mapped_column(String(128), default="n1-standard-1")
     status: Mapped[str] = mapped_column(String(32), default="RUNNING")
-    network_interfaces: Mapped[list] = mapped_column(JSONB, default=list)
-    disks: Mapped[list] = mapped_column(JSONB, default=list)
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
-    tags: Mapped[dict] = mapped_column(JSONB, default=dict)
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    network_interfaces: Mapped[list] = mapped_column(JSON, default=list)
+    disks: Mapped[list] = mapped_column(JSON, default=list)
+    instance_metadata: Mapped[dict] = mapped_column("metadata", JSON, default=dict)
+    tags: Mapped[dict] = mapped_column(JSON, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     self_link: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 

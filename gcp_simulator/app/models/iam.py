@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -18,7 +19,7 @@ class Role(Base):
     role_id: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str | None] = mapped_column(Text)
     description: Mapped[str | None] = mapped_column(Text)
-    included_permissions: Mapped[list] = mapped_column(JSONB, default=list)
+    included_permissions: Mapped[list] = mapped_column(JSON, default=list)
     stage: Mapped[str] = mapped_column(String(32), default="GA")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
@@ -34,5 +35,5 @@ class RoleBinding(Base):
     project_id: Mapped[str] = mapped_column(String(255), nullable=False)
     resource: Mapped[str] = mapped_column(Text, nullable=False)
     role: Mapped[str] = mapped_column(Text, nullable=False)
-    members: Mapped[list] = mapped_column(JSONB, default=list)
+    members: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

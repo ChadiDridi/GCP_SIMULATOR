@@ -132,7 +132,7 @@ async def update_object_metadata(
     if "contentType" in body:
         obj.content_type = body["contentType"]
     if "metadata" in body:
-        obj.metadata = body["metadata"]
+        obj.user_metadata = body["metadata"]
     obj.updated_at = datetime.now(timezone.utc)
     await db.flush()
     return ObjectMetadataResponse.from_orm(obj, _base_url(request)).model_dump()
@@ -333,7 +333,7 @@ async def _upsert_object(
         obj.size = len(data)
         obj.content_type = content_type
         obj.md5_hash = md5
-        obj.metadata = metadata
+        obj.user_metadata = metadata
         obj.updated_at = now
         obj.generation += 1
     else:
@@ -344,7 +344,7 @@ async def _upsert_object(
             content_type=content_type,
             size=len(data),
             md5_hash=md5,
-            metadata=metadata,
+            user_metadata=metadata,
             generation=1,
             data=data,
             created_at=now,

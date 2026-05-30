@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -17,7 +18,7 @@ class Repository(Base):
     project_id: Mapped[str] = mapped_column(String(255), nullable=False)
     location: Mapped[str] = mapped_column(String(128), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    git_remote_settings: Mapped[dict] = mapped_column(JSONB, default=dict)
+    git_remote_settings: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -35,7 +36,7 @@ class Workspace(Base):
         nullable=False,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    files: Mapped[dict] = mapped_column(JSONB, default=dict)
+    files: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -54,6 +55,6 @@ class CompilationResult(Base):
     )
     result_id: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
     git_commitish: Mapped[str | None] = mapped_column(Text)
-    code_compilation_config: Mapped[dict] = mapped_column(JSONB, default=dict)
+    code_compilation_config: Mapped[dict] = mapped_column(JSON, default=dict)
     compiled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    compilation_errors: Mapped[list] = mapped_column(JSONB, default=list)
+    compilation_errors: Mapped[list] = mapped_column(JSON, default=list)

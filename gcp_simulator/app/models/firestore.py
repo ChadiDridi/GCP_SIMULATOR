@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -18,6 +19,6 @@ class Document(Base):
     database_id: Mapped[str] = mapped_column(String(255), nullable=False, default="(default)")
     collection_id: Mapped[str] = mapped_column(String(1500), nullable=False)
     document_id: Mapped[str] = mapped_column(String(1500), nullable=False)
-    fields: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    fields: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     create_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     update_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)

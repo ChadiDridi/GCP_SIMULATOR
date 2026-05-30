@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Integer, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -19,7 +20,7 @@ class ManagedZone(Base):
     dns_name: Mapped[str | None] = mapped_column(Text)
     description: Mapped[str | None] = mapped_column(Text)
     visibility: Mapped[str] = mapped_column(String(32), default="public")
-    dnssec_config: Mapped[dict] = mapped_column(JSONB, default=dict)
+    dnssec_config: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -39,5 +40,5 @@ class RecordSet(Base):
     name: Mapped[str] = mapped_column(Text, nullable=False)
     type: Mapped[str] = mapped_column(String(16), nullable=False)
     ttl: Mapped[int] = mapped_column(Integer, default=300)
-    rrdatas: Mapped[list] = mapped_column(JSONB, default=list)
+    rrdatas: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

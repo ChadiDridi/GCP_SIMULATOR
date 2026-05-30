@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DatasetCreate(BaseModel):
@@ -9,13 +9,10 @@ class DatasetCreate(BaseModel):
 
 class TableCreate(BaseModel):
     tableReference: dict
-    schema_: dict | None = None
+    schema_: dict | None = Field(None, alias="schema")
     labels: dict[str, str] = {}
 
     model_config = {"populate_by_name": True}
-
-    class Config:
-        fields = {"schema_": "schema"}
 
 
 class InsertAllRequest(BaseModel):

@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Integer, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -22,7 +23,7 @@ class CloudRunService(Base):
     host_port: Mapped[int | None] = mapped_column(Integer)
     url: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(32), default="RUNNING")
-    env_vars: Mapped[dict] = mapped_column(JSONB, default=dict)
+    env_vars: Mapped[dict] = mapped_column(JSON, default=dict)
     container_port: Mapped[int] = mapped_column(Integer, default=8080)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

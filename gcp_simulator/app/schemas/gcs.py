@@ -64,7 +64,7 @@ class ObjectMetadataResponse(BaseModel):
             md5Hash=obj.md5_hash,
             crc32c=obj.crc32c,
             generation=str(obj.generation),
-            metadata=obj.metadata or {},
+            metadata=obj.user_metadata or {},
             timeCreated=obj.created_at.isoformat() + "Z",
             updated=obj.updated_at.isoformat() + "Z",
             selfLink=f"{base_url}/storage/v1/b/{obj.bucket_name}/o/{obj.name}",

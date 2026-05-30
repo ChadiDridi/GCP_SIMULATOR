@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Integer, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -35,8 +36,8 @@ class BackendService(Base):
     project_id: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     protocol: Mapped[str] = mapped_column(String(16), default="HTTP")
-    backends: Mapped[list] = mapped_column(JSONB, default=list)
-    health_checks: Mapped[list] = mapped_column(JSONB, default=list)
+    backends: Mapped[list] = mapped_column(JSON, default=list)
+    health_checks: Mapped[list] = mapped_column(JSON, default=list)
     timeout_sec: Mapped[int] = mapped_column(Integer, default=30)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
@@ -72,8 +73,8 @@ class UrlMap(Base):
     project_id: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     default_service: Mapped[str | None] = mapped_column(Text)
-    host_rules: Mapped[list] = mapped_column(JSONB, default=list)
-    path_matchers: Mapped[list] = mapped_column(JSONB, default=list)
+    host_rules: Mapped[list] = mapped_column(JSON, default=list)
+    path_matchers: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 

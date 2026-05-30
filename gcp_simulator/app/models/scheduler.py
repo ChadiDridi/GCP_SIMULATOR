@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -22,9 +23,9 @@ class SchedulerJob(Base):
     timezone: Mapped[str] = mapped_column(String(64), default="UTC")
     state: Mapped[str] = mapped_column(String(32), default="ENABLED")
     target_type: Mapped[str | None] = mapped_column(Text)
-    http_target: Mapped[dict] = mapped_column(JSONB, default=dict)
-    pubsub_target: Mapped[dict] = mapped_column(JSONB, default=dict)
+    http_target: Mapped[dict] = mapped_column(JSON, default=dict)
+    pubsub_target: Mapped[dict] = mapped_column(JSON, default=dict)
     last_attempt_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     next_schedule_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    status: Mapped[dict] = mapped_column(JSONB, default=dict)
+    status: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

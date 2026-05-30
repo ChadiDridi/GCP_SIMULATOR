@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Text, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -23,5 +24,5 @@ class MemorystoreInstance(Base):
     host: Mapped[str] = mapped_column(String(128), default="127.0.0.1")
     port: Mapped[int] = mapped_column(Integer, default=6379)
     redis_version: Mapped[str] = mapped_column(String(32), default="REDIS_7_0")
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

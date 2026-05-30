@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, DateTime, Boolean, Integer, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import UUID
 from gcp_simulator.app.db.engine import Base
 
 
@@ -19,7 +20,7 @@ class Network(Base):
     auto_create_subnetworks: Mapped[bool] = mapped_column(Boolean, default=True)
     routing_mode: Mapped[str] = mapped_column(String(32), default="REGIONAL")
     description: Mapped[str | None] = mapped_column(Text)
-    labels: Mapped[dict] = mapped_column(JSONB, default=dict)
+    labels: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -37,7 +38,7 @@ class Subnetwork(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     ip_cidr_range: Mapped[str | None] = mapped_column(Text)
     private_ip_google_access: Mapped[bool] = mapped_column(Boolean, default=False)
-    secondary_ranges: Mapped[list] = mapped_column(JSONB, default=list)
+    secondary_ranges: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -55,7 +56,7 @@ class FirewallRule(Base):
     priority: Mapped[int] = mapped_column(Integer, default=1000)
     direction: Mapped[str] = mapped_column(String(16), default="INGRESS")
     action: Mapped[str] = mapped_column(String(16), default="ALLOW")
-    match_rules: Mapped[dict] = mapped_column(JSONB, default=dict)
-    target_tags: Mapped[list] = mapped_column(JSONB, default=list)
-    source_ranges: Mapped[list] = mapped_column(JSONB, default=list)
+    match_rules: Mapped[dict] = mapped_column(JSON, default=dict)
+    target_tags: Mapped[list] = mapped_column(JSON, default=list)
+    source_ranges: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
